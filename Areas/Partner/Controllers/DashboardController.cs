@@ -24,26 +24,32 @@ namespace HearMeStay.Areas.Partner.Controllers
             _reportService = reportService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? accId)
         {
             var userId = _userManager.GetUserId(User);
-            var accommodation = await _context.Accommodations.FirstOrDefaultAsync(a => a.OwnerId == userId);
-            if (accommodation == null)
+            var accommodations = await _context.Accommodations.Where(a => a.OwnerId == userId).ToListAsync();
+            if (!accommodations.Any())
             {
                 ViewBag.NoAccommodation = true;
                 return View();
             }
 
-            var accId = accommodation.Id;
+            var accommodation = accId.HasValue ? accommodations.FirstOrDefault(a => a.Id == accId) : accommodations.First();
+            if (accommodation == null) accommodation = accommodations.First();
+
+            ViewBag.Accommodations = accommodations;
+            ViewBag.SelectedAccId = accommodation.Id;
+
+            var id = accommodation.Id;
             ViewBag.AccommodationName = accommodation.Name;
             ViewBag.AccommodationStatus = accommodation.Status;
-            ViewBag.PendingBookings = await _context.Bookings.CountAsync(b => b.AccommodationId == accId && b.BookingStatus == BookingStatus.Pending);
-            ViewBag.ConfirmedBookings = await _context.Bookings.CountAsync(b => b.AccommodationId == accId && b.BookingStatus == BookingStatus.Confirmed);
-            ViewBag.UpcomingCheckIns = await _context.Bookings.CountAsync(b => b.AccommodationId == accId && b.BookingStatus == BookingStatus.Confirmed && b.CheckInDate <= DateTime.Now.AddDays(7) && b.CheckInDate >= DateTime.Now);
-            ViewBag.HighPriorityInsights = await _context.GuestInsights.CountAsync(gi => gi.GuestPreference.Booking.AccommodationId == accId && (gi.PriorityLevel == PriorityLevel.High || gi.PriorityLevel == PriorityLevel.Critical));
-            ViewBag.Revenue = await _reportService.GetTotalRevenueAsync(accId);
-            ViewBag.AvgRating = await _reportService.GetAverageRatingAsync(accId);
-            ViewBag.PreferenceRate = await _reportService.GetPreferenceFormRateAsync(accId);
+            ViewBag.PendingBookings = await _context.Bookings.CountAsync(b => b.AccommodationId == id && b.BookingStatus == BookingStatus.Pending);
+            ViewBag.ConfirmedBookings = await _context.Bookings.CountAsync(b => b.AccommodationId == id && (b.BookingStatus == BookingStatus.Confirmed || b.BookingStatus == BookingStatus.Completed));
+            ViewBag.UpcomingCheckIns = await _context.Bookings.CountAsync(b => b.AccommodationId == id && b.BookingStatus == BookingStatus.Confirmed && b.CheckInDate <= DateTime.Now.AddDays(7) && b.CheckInDate >= DateTime.Now);
+            ViewBag.HighPriorityInsights = await _context.GuestInsights.CountAsync(gi => gi.GuestPreference.Booking.AccommodationId == id && (gi.PriorityLevel == PriorityLevel.High || gi.PriorityLevel == PriorityLevel.Critical));
+            ViewBag.Revenue = await _reportService.GetTotalRevenueAsync(id);
+            ViewBag.AvgRating = await _reportService.GetAverageRatingAsync(id);
+            ViewBag.PreferenceRate = await _reportService.GetPreferenceFormRateAsync(id);
 
             return View();
         }

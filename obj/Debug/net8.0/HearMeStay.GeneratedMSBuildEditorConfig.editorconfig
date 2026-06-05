@@ -76,6 +76,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUGFydG5lclxWaWV3c1xBZGRPblNlcnZpY2VzXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/EXE201/HearMeStay/Areas/Partner/Views/AddOnServices/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUGFydG5lclxWaWV3c1xBZGRPblNlcnZpY2VzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/EXE201/HearMeStay/Areas/Partner/Views/AddOnServices/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUGFydG5lclxWaWV3c1xBZGRPblNlcnZpY2VzXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

@@ -99,8 +99,13 @@
                             </select>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label fw-bold">Phụ phí dịch vụ thêm (VNĐ)</label>
+                            <input type="number" name="extraFee" class="form-control" value="0" min="0" step="1000" placeholder="Nhập số tiền phụ phí (nếu có)" />
+                            <small class="text-muted">Nhập phí phát sinh nếu khách yêu cầu thêm dịch vụ (trang trí phòng, đưa đón,...). Số tiền này sẽ được cộng vào Tổng tiền thanh toán.</small>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label fw-bold">Ghi chú phản hồi cho khách</label>
-                            <textarea name="partnerSpecialRequestNote" class="form-control" rows="2" placeholder="Ví dụ: Chúng tôi đã chuẩn bị phòng yên tĩnh cho bạn. Tuy nhiên dịch vụ BBQ không mở cửa..."></textarea>
+                            <textarea name="partnerSpecialRequestNote" class="form-control" rows="2" placeholder="Ví dụ: Chúng tôi đã chuẩn bị phòng yên tĩnh. Phí trang trí phòng là 200.000đ đã được cộng vào tổng bill..."></textarea>
                         </div>
                     }
                     
@@ -121,10 +126,37 @@
             <div class="hms-form-section p-4 text-center border border-info shadow-sm" style="background-color: #f0f9ff;">
                 <h5 class="fw-bold mb-3 text-info"><i class="bi bi-shield-check me-2"></i>Xác minh thanh toán</h5>
                 <p>Khách hàng đã báo cáo thanh toán. Hình thức: <strong>@Model.PaymentTransferContent</strong></p>
-                <form asp-action="VerifyPayment" method="post">
-                    <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" class="btn btn-info text-white fw-bold px-4 rounded-pill"><i class="bi bi-check-circle me-1"></i>Đã nhận được tiền & Hoàn tất</button>
-                </form>
+                <div class="d-flex justify-content-center gap-2">
+                    <form asp-action="VerifyPayment" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-info text-white fw-bold px-4 rounded-pill"><i class="bi bi-check-circle me-1"></i>Đã nhận được tiền & Hoàn tất</button>
+                    </form>
+                    <button type="button" class="btn btn-outline-danger px-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#rejectPaymentModal">Chưa nhận được tiền</button>
+                </div>
+            </div>
+
+            <!-- Modal từ chối thanh toán -->
+            <div class="modal fade" id="rejectPaymentModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <form asp-action="RejectPayment" method="post" class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-danger">Báo cáo chưa nhận được tiền</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <p class="mb-3">Khách hàng sẽ nhận được thông báo để kiểm tra lại giao dịch hoặc thực hiện thanh toán lại.</p>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Lý do (Tùy chọn)</label>
+                                <textarea name="reason" class="form-control" rows="2" placeholder="Ví dụ: Kiểm tra sao kê chưa thấy tiền nổi, hoặc số tiền chuyển bị thiếu..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-danger">Xác nhận</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         }
         else
@@ -139,6 +171,15 @@
                 {
                     <p class="mt-2 mb-1"><strong>Phản hồi yêu cầu:</strong> @Model.GuestPreference.SpecialRequestStatus</p>
                     <p class="text-muted small">@Model.GuestPreference.PartnerSpecialRequestNote</p>
+                }
+
+                @if (Model.BookingStatus == HearMeStay.Models.Enums.BookingStatus.Confirmed)
+                {
+                    <hr class="my-3">
+                    <form asp-action="MarkCompleted" method="post" onsubmit="return confirm('Xác nhận khách đã hoàn tất lưu trú (Check-out) và trả phòng? Khách hàng sẽ nhận được yêu cầu đánh giá.');">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-success"><i class="bi bi-calendar-check me-1"></i>Đánh dấu đã hoàn tất lưu trú</button>
+                    </form>
                 }
             </div>
         }

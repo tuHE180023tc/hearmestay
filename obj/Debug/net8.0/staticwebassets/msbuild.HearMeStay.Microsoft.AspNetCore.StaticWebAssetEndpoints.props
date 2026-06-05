@@ -28,13 +28,13 @@
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\HearMeStay.gw6h4vbly6.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-MI235ghcUpITxkhfS3SLuj1Ye958YcLy8jbgdhzY8kA="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1128"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022MI235ghcUpITxkhfS3SLuj1Ye958YcLy8jbgdhzY8kA=\u0022"},{"Name":"Last-Modified","Value":"Wed, 27 May 2026 17:32:08 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1128"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022MI235ghcUpITxkhfS3SLuj1Ye958YcLy8jbgdhzY8kA=\u0022"},{"Name":"Last-Modified","Value":"Thu, 04 Jun 2026 01:04:54 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/HearMeStay/HearMeStay.gw6h4vbly6.bundle.scp.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\HearMeStay.gw6h4vbly6.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"gw6h4vbly6"},{"Name":"integrity","Value":"sha256-MI235ghcUpITxkhfS3SLuj1Ye958YcLy8jbgdhzY8kA="},{"Name":"label","Value":"_content/HearMeStay/HearMeStay.bundle.scp.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1128"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022MI235ghcUpITxkhfS3SLuj1Ye958YcLy8jbgdhzY8kA=\u0022"},{"Name":"Last-Modified","Value":"Wed, 27 May 2026 17:32:08 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1128"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022MI235ghcUpITxkhfS3SLuj1Ye958YcLy8jbgdhzY8kA=\u0022"},{"Name":"Last-Modified","Value":"Thu, 04 Jun 2026 01:04:54 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/HearMeStay/images/placeholder-homestay.f5ij1hhj22.svg">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\placeholder-homestay.svg'))</AssetFile>

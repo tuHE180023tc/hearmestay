@@ -42,9 +42,9 @@
                 <div class="hms-form-section fade-up">
                     <div class="hms-form-section-header"><div class="hms-form-section-icon" style="background:#FEF3C7;color:#92400E;">🎉</div><h6 class="hms-form-section-title">Dịp đặc biệt</h6></div>
                     <div class="row g-2">
-                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox" type="checkbox" value="Đi sinh nhật" id="chkOcc1"><label class="form-check-label" for="chkOcc1">Sinh nhật</label></div></div>
-                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox" type="checkbox" value="Đi kỷ niệm" id="chkOcc2"><label class="form-check-label" for="chkOcc2">Kỷ niệm</label></div></div>
-                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox" type="checkbox" value="Honeymoon" id="chkOcc3"><label class="form-check-label" for="chkOcc3">Honeymoon</label></div></div>
+                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox fee-trigger" type="checkbox" value="Đi sinh nhật" id="chkOcc1"><label class="form-check-label" for="chkOcc1">Sinh nhật</label></div></div>
+                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox fee-trigger" type="checkbox" value="Đi kỷ niệm" id="chkOcc2"><label class="form-check-label" for="chkOcc2">Kỷ niệm</label></div></div>
+                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox fee-trigger" type="checkbox" value="Honeymoon" id="chkOcc3"><label class="form-check-label" for="chkOcc3">Honeymoon</label></div></div>
                         <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox" type="checkbox" value="Chuyến đi gia đình" id="chkOcc4"><label class="form-check-label" for="chkOcc4">Chuyến đi gia đình</label></div></div>
                     </div>
                 </div>
@@ -53,11 +53,14 @@
                 <div class="hms-form-section fade-up">
                     <div class="hms-form-section-header"><div class="hms-form-section-icon" style="background:#CFFAFE;color:#155E75;">🎯</div><h6 class="hms-form-section-title">Dịch vụ thêm</h6></div>
                     <div class="row g-2">
-                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox" type="checkbox" value="Cần trang trí phòng" id="chkSvc1"><label class="form-check-label" for="chkSvc1">Trang trí phòng</label></div></div>
-                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox" type="checkbox" value="Cần đưa đón sân bay" id="chkSvc2"><label class="form-check-label" for="chkSvc2">Đưa đón sân bay</label></div></div>
-                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox" type="checkbox" value="Muốn ăn BBQ" id="chkSvc3"><label class="form-check-label" for="chkSvc3">BBQ</label></div></div>
-                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox" type="checkbox" value="Cần Spa" id="chkSvc4"><label class="form-check-label" for="chkSvc4">Spa</label></div></div>
-                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox" type="checkbox" value="Muốn đi tour địa phương" id="chkSvc5"><label class="form-check-label" for="chkSvc5">Tour địa phương</label></div></div>
+                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox fee-trigger" type="checkbox" value="Cần trang trí phòng" id="chkSvc1"><label class="form-check-label" for="chkSvc1">Trang trí phòng</label></div></div>
+                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox fee-trigger" type="checkbox" value="Cần đưa đón sân bay" id="chkSvc2"><label class="form-check-label" for="chkSvc2">Đưa đón sân bay</label></div></div>
+                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox fee-trigger" type="checkbox" value="Muốn ăn BBQ" id="chkSvc3"><label class="form-check-label" for="chkSvc3">BBQ</label></div></div>
+                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox fee-trigger" type="checkbox" value="Cần Spa" id="chkSvc4"><label class="form-check-label" for="chkSvc4">Spa</label></div></div>
+                        <div class="col-md-6"><div class="form-check"><input class="form-check-input pref-checkbox fee-trigger" type="checkbox" value="Muốn đi tour địa phương" id="chkSvc5"><label class="form-check-label" for="chkSvc5">Tour địa phương</label></div></div>
+                    </div>
+                    <div id="feeWarningAlert" class="alert alert-warning mt-3 mb-0 d-none" style="font-size: .85rem; background-color: #fff3cd; border-color: #ffe69c;">
+                        <i class="bi bi-exclamation-triangle-fill me-2 text-warning"></i><strong>Lưu ý:</strong> Một số dịch vụ hoặc yêu cầu bạn vừa chọn (Trang trí phòng, Đưa đón, BBQ...) có thể phát sinh thêm phụ phí. Nơi lưu trú sẽ kiểm tra và thông báo chính xác số tiền phụ phí (nếu có) trước khi bạn thanh toán.
                     </div>
                 </div>
 
@@ -107,6 +110,21 @@
             
             // Set to hidden RawText
             document.getElementById('finalRawText').value = combinedText.join('. ');
+        });
+
+        // Show fee warning if extra services are selected
+        const feeTriggers = document.querySelectorAll('.fee-trigger');
+        const feeWarningAlert = document.getElementById('feeWarningAlert');
+        
+        feeTriggers.forEach(cb => {
+            cb.addEventListener('change', function() {
+                const anyChecked = Array.from(feeTriggers).some(t => t.checked);
+                if (anyChecked) {
+                    feeWarningAlert.classList.remove('d-none');
+                } else {
+                    feeWarningAlert.classList.add('d-none');
+                }
+            });
         });
     </script>
 }

@@ -50,7 +50,7 @@ namespace HearMeStay.Services
             return booking;
         }
 
-        public async Task<Booking?> ConfirmBookingAsync(int bookingId, string? partnerNote = null)
+        public async Task<Booking?> ConfirmBookingAsync(int bookingId, string? partnerNote = null, decimal extraFee = 0)
         {
             var booking = await _context.Bookings.Include(b => b.Accommodation).FirstOrDefaultAsync(b => b.Id == bookingId);
             if (booking == null || booking.BookingStatus != BookingStatus.Pending) return null;
@@ -58,10 +58,20 @@ namespace HearMeStay.Services
             booking.BookingStatus = BookingStatus.PaymentPending;
             booking.PartnerResponseNote = partnerNote;
             
+            // Add extra fee if provided
+            if (extraFee > 0)
+            {
+                booking.TotalAmount += extraFee;
+                // Optionally update commission if you want commission to apply to extra fees too
+                booking.CommissionAmount = CalculateCommission(booking.TotalAmount, booking.CommissionRate);
+            }
+
             // Mock QR and Transfer Content for Payment step
             booking.PaymentDeadline = DateTime.Now.AddHours(24);
-            booking.PaymentQrImageUrl = "https://img.vietqr.io/image/970436-0987654321-compact2.jpg?amount=" + booking.TotalAmount + "&addInfo=" + booking.BookingCode + "&accountName=HEARMESTAY";
-            booking.PaymentTransferContent = $"HMS {booking.BookingCode}";
+            long amountInt = (long)booking.TotalAmount; // Ép kiểu số nguyên để VietQR nhận dạng đúng số tiền
+            string encodedName = Uri.EscapeDataString("TO CHINH TU");
+            booking.PaymentQrImageUrl = $"https://img.vietqr.io/image/tpbank-81655940116-compact2.jpg?amount={amountInt}&addInfo={booking.BookingCode}&accountName={encodedName}";
+            booking.PaymentTransferContent = booking.BookingCode;
 
             await _context.SaveChangesAsync();
 
@@ -134,6 +144,24 @@ namespace HearMeStay.Services
             return booking;
         }
 
+        public async Task<Booking?> RejectPaymentAsync(int bookingId, string reason)
+        {
+            var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId);
+            if (booking == null || booking.BookingStatus != BookingStatus.PaymentVerificationPending) return null;
+
+            // Revert back to PaymentPending so they can pay again
+            booking.BookingStatus = BookingStatus.PaymentPending;
+            await _context.SaveChangesAsync();
+
+            await _notificationService.CreateNotificationAsync(
+                booking.UserId,
+                "Chưa nhận được thanh toán",
+                $"Nơi lưu trú báo cáo chưa nhận được khoản thanh toán cho đặt phòng #{booking.BookingCode}. Lý do: {reason}. Vui lòng kiểm tra lại hoặc liên hệ hỗ trợ.",
+                "PaymentRejected");
+
+            return booking;
+        }
+
         public async Task<Booking?> RejectBookingAsync(int bookingId, string? partnerNote = null)
         {
             var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId);
@@ -156,7 +184,9 @@ namespace HearMeStay.Services
         {
             var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == bookingId);
             if (booking == null) return null;
-            if (booking.BookingStatus != BookingStatus.Pending && booking.BookingStatus != BookingStatus.Confirmed) return null;
+            if (booking.BookingStatus != BookingStatus.Pending && 
+                booking.BookingStatus != BookingStatus.Confirmed && 
+                booking.BookingStatus != BookingStatus.PaymentPending) return null;
 
             booking.BookingStatus = BookingStatus.Cancelled;
             booking.CancelledAt = DateTime.Now;

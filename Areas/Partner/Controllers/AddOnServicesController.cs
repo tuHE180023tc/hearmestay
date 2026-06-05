@@ -40,6 +40,32 @@ namespace HearMeStay.Areas.Partner.Controllers
             TempData["Success"] = "Đã thêm dịch vụ."; return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+            var svc = await _context.AddOnServices.Include(s => s.Accommodation).FirstOrDefaultAsync(s => s.Id == id && s.Accommodation.OwnerId == userId);
+            if (svc == null) return NotFound();
+            return View(svc);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, AddOnService model)
+        {
+            if (id != model.Id) return NotFound();
+            var userId = _userManager.GetUserId(User);
+            if (!await _context.Accommodations.AnyAsync(a => a.Id == model.AccommodationId && a.OwnerId == userId)) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(model);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Đã cập nhật dịch vụ.";
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
+
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {

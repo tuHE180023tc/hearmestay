@@ -54,14 +54,14 @@ namespace HearMeStay.Areas.Partner.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Confirm(int id, HearMeStay.Models.Enums.SpecialRequestStatus specialRequestStatus, string? partnerSpecialRequestNote)
+        public async Task<IActionResult> Confirm(int id, HearMeStay.Models.Enums.SpecialRequestStatus specialRequestStatus, string? partnerSpecialRequestNote, decimal extraFee = 0)
         {
             var userId = _userManager.GetUserId(User);
             var booking = await _context.Bookings.Include(b => b.Accommodation).Include(b => b.GuestPreference).FirstOrDefaultAsync(b => b.Id == id && b.Accommodation.OwnerId == userId);
             if (booking == null) return NotFound();
             
             // Confirm the booking
-            await _bookingService.ConfirmBookingAsync(id, partnerSpecialRequestNote);
+            await _bookingService.ConfirmBookingAsync(id, partnerSpecialRequestNote, extraFee);
             
             // Handle Special Request Status if a GuestPreference exists
             if (booking.GuestPreference != null)
@@ -97,6 +97,18 @@ namespace HearMeStay.Areas.Partner.Controllers
 
             await _bookingService.VerifyPaymentAsync(id, user?.FullName ?? "Partner");
             TempData["Success"] = "Đã xác minh thanh toán thành công. Đặt phòng đã hoàn tất.";
+            return RedirectToAction("Details", new { id });
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectPayment(int id, string reason)
+        {
+            var userId = _userManager.GetUserId(User);
+            var booking = await _context.Bookings.Include(b => b.Accommodation).FirstOrDefaultAsync(b => b.Id == id && b.Accommodation.OwnerId == userId);
+            if (booking == null) return NotFound();
+
+            await _bookingService.RejectPaymentAsync(id, reason);
+            TempData["Success"] = "Đã báo cáo chưa nhận được thanh toán. Trạng thái đã được chuyển lại thành Chờ thanh toán.";
             return RedirectToAction("Details", new { id });
         }
 

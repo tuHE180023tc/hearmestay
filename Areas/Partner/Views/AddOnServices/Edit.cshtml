@@ -1,0 +1,43 @@
+@model HearMeStay.Models.AddOnService
+@{ ViewData["Title"] = "Sửa dịch vụ"; }
+<h2 class="fw-bold mb-4">Sửa dịch vụ cộng thêm</h2>
+<div class="card shadow-sm border-0 p-4" style="border-radius:16px;">
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="AccommodationId" />
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" class="form-control" type="number" />
+                <span asp-validation-for="Price" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="ServiceType" class="form-label"></label>
+                <select asp-for="ServiceType" class="form-select">
+                    <option value="Spa">Spa</option>
+                    <option value="Tour">Tour</option>
+                    <option value="BBQ">BBQ</option>
+                    <option value="Decoration">Trang trí</option>
+                    <option value="AirportPickup">Đưa đón sân bay</option>
+                    <option value="PrivateDinner">Bữa tối riêng</option>
+                    <option value="Other">Khác</option>
+                </select>
+                <span asp-validation-for="ServiceType" class="text-danger small"></span>
+            </div>
+            <div class="col-12">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+        </div>
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Lưu thay đổi</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+        </div>
+    </form>
+</div>
