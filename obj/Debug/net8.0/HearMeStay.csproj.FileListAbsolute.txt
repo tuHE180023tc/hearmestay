@@ -301,10 +301,10 @@ D:\EXE201\HearMeStay\obj\Debug\net8.0\staticwebassets\msbuild.build.HearMeStay.p
 D:\EXE201\HearMeStay\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.HearMeStay.props
 D:\EXE201\HearMeStay\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.HearMeStay.props
 D:\EXE201\HearMeStay\obj\Debug\net8.0\staticwebassets.pack.json
-D:\EXE201\HearMeStay\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\EXE201\HearMeStay\obj\Debug\net8.0\HearMeStay.csproj.Up2Date
 D:\EXE201\HearMeStay\obj\Debug\net8.0\HearMeStay.dll
 D:\EXE201\HearMeStay\obj\Debug\net8.0\refint\HearMeStay.dll
 D:\EXE201\HearMeStay\obj\Debug\net8.0\HearMeStay.pdb
 D:\EXE201\HearMeStay\obj\Debug\net8.0\HearMeStay.genruntimeconfig.cache
 D:\EXE201\HearMeStay\obj\Debug\net8.0\ref\HearMeStay.dll
+D:\EXE201\HearMeStay\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

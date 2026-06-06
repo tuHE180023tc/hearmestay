@@ -91,6 +91,19 @@ namespace HearMeStay.Data
                 await userManager.AddToRoleAsync(t2, "Traveler");
             }
 
+            // Seed Subscription Plans
+            if (!context.SubscriptionPlans.Any())
+            {
+                var plans = new List<SubscriptionPlan>
+                {
+                    new SubscriptionPlan { Name = "Free Listing", PricePerMonth = 0, CommissionRate = 12.0, Features = "Đăng tối đa 1 nơi lưu trú,Phân tích AI cơ bản,Nhận booking cơ bản" },
+                    new SubscriptionPlan { Name = "Professional", PricePerMonth = 1499000, CommissionRate = 8.0, Features = "Không giới hạn nơi lưu trú,Phân tích AI chuyên sâu,Xuất báo cáo doanh thu chi tiết,Hỗ trợ ưu tiên 24/7" },
+                    new SubscriptionPlan { Name = "Premium", PricePerMonth = 4999000, CommissionRate = 3.0, Features = "Tất cả của gói Pro,Hỗ trợ marketing đa kênh,Tùy chỉnh luồng booking,Tích hợp API hệ thống PMS riêng" }
+                };
+                context.SubscriptionPlans.AddRange(plans);
+                await context.SaveChangesAsync();
+            }
+
             // Seed Amenities
             if (!context.Amenities.Any())
             {

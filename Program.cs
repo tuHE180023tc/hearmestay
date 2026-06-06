@@ -57,6 +57,8 @@ namespace HearMeStay
             builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<IFileUploadService, FileUploadService>();
             builder.Services.AddScoped<IReportService, ReportService>();
+            builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+            builder.Services.AddHostedService<SubscriptionBackgroundService>();
 
             // Conditional AI provider registration
             var aiProvider = builder.Configuration["AI:Provider"] ?? "Mock";

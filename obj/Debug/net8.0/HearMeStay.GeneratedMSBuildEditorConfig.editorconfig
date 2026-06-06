@@ -48,6 +48,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2hhcmVkXF9BZG1pbkxheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/EXE201/HearMeStay/Areas/Admin/Views/Subscriptions/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU3Vic2NyaXB0aW9uc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/EXE201/HearMeStay/Areas/Admin/Views/Users/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVXNlcnNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -106,6 +110,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/EXE201/HearMeStay/Areas/Partner/Views/Packages/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUGFydG5lclxWaWV3c1xQYWNrYWdlc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/EXE201/HearMeStay/Areas/Partner/Views/Packages/Payment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcUGFydG5lclxWaWV3c1xQYWNrYWdlc1xQYXltZW50LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/EXE201/HearMeStay/Areas/Partner/Views/Reports/Index.cshtml]

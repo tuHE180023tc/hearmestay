@@ -1,83 +1,51 @@
+@model List<HearMeStay.Models.SubscriptionPlan>
 @{ ViewData["Title"] = "Gói dịch vụ"; }
-<div class="mb-4">
-    <p class="text-muted">Nâng cấp gói để mở khóa thêm các tính năng AI và báo cáo chuyên sâu, giúp tối ưu doanh thu và trải nghiệm khách hàng.</p>
-</div>
+<h2 class="fw-bold mb-4">Các gói dịch vụ (Subscription)</h2>
+<p class="text-muted mb-4">Nâng cấp gói dịch vụ để tận hưởng hoa hồng thấp hơn và nhiều tính năng đặc quyền giúp tăng tối đa doanh thu.</p>
 
 <div class="row g-4">
-    <!-- Free Listing -->
-    <div class="col-xl-3 col-md-6 fade-up">
-        <div class="hms-card h-100 p-4" style="border:1px solid var(--border-light);">
-            <div class="text-center mb-4">
-                <h5 class="fw-bold mb-1">Free Listing</h5>
-                <h3 class="fw-bold text-dark mb-0">0₫<span class="text-muted fs-6 fw-normal">/tháng</span></h3>
-                <p class="text-muted small mt-2">Hoa hồng: <strong>10%</strong>/booking</p>
-            </div>
-            <ul class="list-unstyled mb-4" style="font-size:.88rem;color:var(--text-sec);line-height:2;">
-                <li><i class="bi bi-check2 text-success me-2"></i>Đăng nơi lưu trú</li>
-                <li><i class="bi bi-check2 text-success me-2"></i>Nhận booking</li>
-                <li><i class="bi bi-check2 text-success me-2"></i>Quản lý phòng cơ bản</li>
-                <li class="text-muted" style="opacity:.5"><i class="bi bi-dash me-2"></i>AI Insight</li>
-                <li class="text-muted" style="opacity:.5"><i class="bi bi-dash me-2"></i>Báo cáo chuyên sâu</li>
-            </ul>
-            <button class="btn btn-outline-secondary w-100" disabled>Đang sử dụng</button>
-        </div>
-    </div>
+    @foreach(var plan in Model)
+    {
+        var isCurrent = ViewBag.ActivePlanId == plan.Id;
+        var features = string.IsNullOrEmpty(plan.Features) ? new string[0] : plan.Features.Split(',');
 
-    <!-- Partner Basic -->
-    <div class="col-xl-3 col-md-6 fade-up">
-        <div class="hms-card h-100 p-4 position-relative" style="border:2px solid var(--teal);box-shadow:var(--shadow-lg);">
-            <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-teal" style="background:var(--teal);font-size:.7rem;padding:.3rem .8rem;">PHỔ BIẾN</div>
-            <div class="text-center mb-4 mt-2">
-                <h5 class="fw-bold mb-1" style="color:var(--teal);">Partner Basic</h5>
-                <h3 class="fw-bold text-dark mb-0 hms-price">399k<span class="text-muted fs-6 fw-normal">/tháng</span></h3>
-                <p class="text-muted small mt-2">Hoa hồng: <strong>7%</strong>/booking</p>
-            </div>
-            <ul class="list-unstyled mb-4" style="font-size:.88rem;color:var(--text-sec);line-height:2;">
-                <li><i class="bi bi-check2 text-success me-2"></i>Mọi tính năng Free</li>
-                <li><i class="bi bi-check2 text-success me-2"></i><strong>AI Insight cơ bản</strong></li>
-                <li><i class="bi bi-check2 text-success me-2"></i>Quản lý booking nhanh</li>
-                <li><i class="bi bi-check2 text-success me-2"></i>Báo cáo cơ bản</li>
-                <li class="text-muted" style="opacity:.5"><i class="bi bi-dash me-2"></i>Gợi ý upsell</li>
-            </ul>
-            <button class="btn btn-primary w-100 mt-auto">Nâng cấp</button>
-        </div>
-    </div>
+        <div class="col-md-4">
+            <div class="card hms-stat-card h-100 p-4 border-0 shadow-sm @(isCurrent ? "border-primary border-2" : "")" style="border-radius:16px; position:relative;">
+                @if (isCurrent)
+                {
+                    <span class="badge bg-primary position-absolute" style="top: -10px; right: 20px; font-size: 0.9rem;">Đang sử dụng</span>
+                }
+                
+                <h4 class="fw-bold mb-3">@plan.Name</h4>
+                <div class="mb-3">
+                    <span class="fs-2 fw-bold hms-price">@plan.PricePerMonth.ToString("N0")₫</span>
+                    <span class="text-muted">/tháng</span>
+                </div>
+                <div class="mb-4">
+                    <span class="badge bg-success-subtle text-success px-3 py-2 fw-bold" style="font-size: 0.95rem;">Hoa hồng: @plan.CommissionRate%</span>
+                </div>
+                
+                <ul class="list-unstyled mb-4 flex-grow-1">
+                    @foreach(var feature in features)
+                    {
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i> @feature.Trim()</li>
+                    }
+                </ul>
 
-    <!-- Partner Pro -->
-    <div class="col-xl-3 col-md-6 fade-up">
-        <div class="hms-card h-100 p-4" style="border:1px solid var(--border-light);">
-            <div class="text-center mb-4">
-                <h5 class="fw-bold mb-1" style="color:#1E40AF;">Partner Pro</h5>
-                <h3 class="fw-bold text-dark mb-0 hms-price">999k<span class="text-muted fs-6 fw-normal">/tháng</span></h3>
-                <p class="text-muted small mt-2">Hoa hồng: <strong>5%</strong>/booking</p>
+                @if (!isCurrent)
+                {
+                    <form asp-action="Upgrade" method="post">
+                        <input type="hidden" name="planId" value="@plan.Id" />
+                        <button type="submit" class="btn btn-outline-primary w-100 fw-bold rounded-pill">
+                            @(plan.PricePerMonth == 0 ? "Chọn gói này" : "Nâng cấp ngay")
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <button class="btn btn-primary w-100 fw-bold rounded-pill" disabled>Đang sử dụng</button>
+                }
             </div>
-            <ul class="list-unstyled mb-4" style="font-size:.88rem;color:var(--text-sec);line-height:2;">
-                <li><i class="bi bi-check2 text-success me-2"></i>Mọi tính năng Basic</li>
-                <li><i class="bi bi-check2 text-success me-2"></i><strong>AI Tags đầy đủ</strong></li>
-                <li><i class="bi bi-check2 text-success me-2"></i>Task theo bộ phận</li>
-                <li><i class="bi bi-check2 text-success me-2"></i>Gợi ý bán chéo (upsell)</li>
-                <li><i class="bi bi-check2 text-success me-2"></i>Báo cáo chi tiết</li>
-            </ul>
-            <button class="btn btn-outline-primary w-100">Chọn gói</button>
         </div>
-    </div>
-
-    <!-- Partner Premium -->
-    <div class="col-xl-3 col-md-6 fade-up">
-        <div class="hms-card h-100 p-4" style="background:linear-gradient(135deg,var(--navy-deep),var(--navy));color:#fff;border:none;">
-            <div class="text-center mb-4">
-                <h5 class="fw-bold mb-1" style="color:var(--gold);">Partner Premium</h5>
-                <h3 class="fw-bold text-white mb-0 hms-price">2.5M<span class="text-white-50 fs-6 fw-normal">/tháng</span></h3>
-                <p class="text-white-50 small mt-2">Hoa hồng: <strong>3%</strong>/booking</p>
-            </div>
-            <ul class="list-unstyled mb-4" style="font-size:.88rem;color:var(--white-70);line-height:2;">
-                <li><i class="bi bi-check2 text-success me-2"></i>Mọi tính năng Pro</li>
-                <li><i class="bi bi-check2 text-success me-2"></i><strong>Ưu tiên hiển thị top</strong></li>
-                <li><i class="bi bi-check2 text-success me-2"></i>Báo cáo chuyên sâu</li>
-                <li><i class="bi bi-check2 text-success me-2"></i>Hỗ trợ riêng 24/7</li>
-                <li><i class="bi bi-check2 text-success me-2"></i>Chuyên gia tư vấn</li>
-            </ul>
-            <button class="btn btn-light w-100 mt-auto" style="color:var(--navy-deep);font-weight:700;">Liên hệ ngay</button>
-        </div>
-    </div>
+    }
 </div>

@@ -27,6 +27,9 @@ namespace HearMeStay.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<CommissionTransaction> CommissionTransactions { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+        public DbSet<PartnerSubscription> PartnerSubscriptions { get; set; }
+        public DbSet<SubscriptionPayment> SubscriptionPayments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
