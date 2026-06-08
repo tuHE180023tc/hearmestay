@@ -71,6 +71,7 @@ namespace HearMeStay.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var acc = await _context.Accommodations
+                .AsSplitQuery()
                 .Include(a => a.Images)
                 .Include(a => a.RoomTypes).ThenInclude(r => r.Images)
                 .Include(a => a.AccommodationAmenities).ThenInclude(aa => aa.Amenity)

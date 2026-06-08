@@ -2,9 +2,33 @@
 @{ ViewData["Title"] = Model.Name; }
 <div style="padding-top:90px;"></div>
 <div class="container py-4">
-    <div class="hms-gallery mb-4 fade-up">
-        @{ var mainImg = Model.Images.FirstOrDefault(i => i.IsMain) ?? Model.Images.FirstOrDefault(); }
-        <img src="@(mainImg?.ImageUrl ?? "/images/placeholder-hotel.svg")" alt="@Model.Name" />
+    @{
+        var orderedImages = Model.Images.OrderByDescending(i => i.IsMain).ToList();
+        var imageCount = orderedImages.Count;
+    }
+    <div class="hms-gallery mb-4 fade-up" id="heroCarousel">
+        <div class="hms-carousel-track">
+            @for (int i = 0; i < imageCount; i++)
+            {
+                <div class="hms-carousel-slide @(i == 0 ? "active" : "")">
+                    <img src="@orderedImages[i].ImageUrl" alt="@Model.Name — Ảnh @(i + 1)" loading="@(i == 0 ? "eager" : "lazy")" />
+                </div>
+            }
+        </div>
+        @if (imageCount > 1)
+        {
+            <button class="hms-carousel-btn hms-carousel-prev" aria-label="Ảnh trước"><i class="bi bi-chevron-left"></i></button>
+            <button class="hms-carousel-btn hms-carousel-next" aria-label="Ảnh tiếp"><i class="bi bi-chevron-right"></i></button>
+            <div class="hms-carousel-dots">
+                @for (int i = 0; i < imageCount; i++)
+                {
+                    <button class="hms-carousel-dot @(i == 0 ? "active" : "")" data-index="@i" aria-label="Ảnh @(i + 1)"></button>
+                }
+            </div>
+            <div class="hms-carousel-counter">
+                <span id="carouselCurrent">1</span> / @imageCount
+            </div>
+        }
     </div>
     <div class="row g-4">
         <div class="col-lg-8">
@@ -20,7 +44,53 @@
             @if(Model.AccommodationAmenities.Any()){<div class="hms-form-section fade-up"><h5 class="fw-bold mb-3"><i class="bi bi-check2-circle me-2" style="color:var(--teal);"></i>Tiện ích</h5><div class="d-flex flex-wrap gap-2">@foreach(var aa in Model.AccommodationAmenities){<span class="hms-amenity"><i class="bi @(aa.Amenity.IconClass??"bi-check")"></i> @aa.Amenity.Name</span>}</div></div>}
             <div class="mb-4 fade-up"><h4 class="fw-bold mb-3"><i class="bi bi-door-open me-2" style="color:var(--teal);"></i>Loại phòng</h4>
             @foreach(var room in Model.RoomTypes.Where(r=>r.IsActive)){
-                <div class="hms-room"><div class="d-flex justify-content-between align-items-start flex-wrap gap-3"><div class="flex-grow-1"><h5 class="fw-bold mb-1" style="font-size:1rem;">@room.Name</h5><p class="text-muted small mb-2">@room.Description</p><div class="mb-2"><span class="room-feat"><i class="bi bi-people"></i> @room.Capacity khách</span><span class="room-feat"><i class="bi bi-rulers"></i> @room.RoomSize m²</span><span class="room-feat"><i class="bi bi-bed"></i> @room.BedType</span></div><div class="d-flex flex-wrap gap-1">@if(room.IsQuietRoom){<span class="badge hms-badge hms-badge-ai">🤫 Yên tĩnh</span>}@if(room.SupportsVeganMeal){<span class="badge hms-badge hms-badge-ai">🌱 Ăn chay</span>}@if(room.SupportsAllergyRequest){<span class="badge hms-badge hms-badge-ai">🛡️ Dị ứng</span>}@if(room.NoStrongScentAvailable){<span class="badge hms-badge hms-badge-ai">🌿 Không mùi</span>}</div></div><div class="text-end" style="min-width:150px;"><div class="hms-price fs-5">@room.PricePerNight.ToString("N0")₫<small class="text-muted fw-normal">/đêm</small></div><p class="text-muted small mb-2">Còn @room.AvailableRooms phòng</p>@if(room.AvailableRooms>0){<a asp-controller="Bookings" asp-action="Create" asp-route-roomTypeId="@room.Id" class="btn btn-primary btn-sm"><i class="bi bi-calendar-plus me-1"></i>Chọn phòng</a>}else{<button class="btn btn-secondary btn-sm" disabled>Hết phòng</button>}</div></div></div>}
+                var roomImages = room.Images.OrderByDescending(ri => ri.IsMain).ToList();
+                var mainRoomImg = roomImages.FirstOrDefault();
+                <div class="hms-room">
+                    <div class="hms-room-layout">
+                        <div class="hms-room-info">
+                            <h5 class="hms-room-name" data-room-id="@room.Id"><i class="bi bi-images me-1" style="font-size:.75rem;"></i>@room.Name</h5>
+                            <p class="hms-room-desc text-muted small mb-2">@room.Description</p>
+                            <div class="mb-2">
+                                <span class="room-feat"><i class="bi bi-people"></i> @room.Capacity khách</span>
+                                <span class="room-feat"><i class="bi bi-rulers"></i> @room.RoomSize m²</span>
+                                <span class="room-feat"><i class="bi bi-bed"></i> @room.BedType</span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-1">
+                                @if(room.IsQuietRoom){<span class="badge hms-badge hms-badge-ai">🤫 Yên tĩnh</span>}
+                                @if(room.SupportsVeganMeal){<span class="badge hms-badge hms-badge-ai">🌱 Ăn chay</span>}
+                                @if(room.SupportsAllergyRequest){<span class="badge hms-badge hms-badge-ai">🛡️ Dị ứng</span>}
+                                @if(room.NoStrongScentAvailable){<span class="badge hms-badge hms-badge-ai">🌿 Không mùi</span>}
+                            </div>
+                        </div>
+                        <div class="hms-room-action">
+                            <div class="hms-price fs-5">@room.PricePerNight.ToString("N0")₫<small class="text-muted fw-normal">/đêm</small></div>
+                            <p class="text-muted small mb-2">Còn @room.AvailableRooms phòng</p>
+                            @if(room.AvailableRooms>0){<a asp-controller="Bookings" asp-action="Create" asp-route-roomTypeId="@room.Id" class="btn btn-primary btn-sm w-100"><i class="bi bi-calendar-plus me-1"></i>Chọn phòng</a>}else{<button class="btn btn-secondary btn-sm w-100" disabled>Hết phòng</button>}
+                        </div>
+                    </div>
+                </div>
+                <!-- Room data for modal -->
+                <script type="application/json" class="room-data" data-room-id="@room.Id">
+                    @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new {
+                        id = room.Id,
+                        name = room.Name,
+                        description = room.Description,
+                        price = room.PricePerNight.ToString("N0"),
+                        capacity = room.Capacity,
+                        roomSize = room.RoomSize,
+                        bedType = room.BedType,
+                        available = room.AvailableRooms,
+                        isQuiet = room.IsQuietRoom,
+                        isVegan = room.SupportsVeganMeal,
+                        isAllergy = room.SupportsAllergyRequest,
+                        noScent = room.NoStrongScentAvailable,
+                        hasPrivateBath = room.HasPrivateBathroom,
+                        images = roomImages.Select(ri => ri.ImageUrl).ToArray(),
+                        bookUrl = room.AvailableRooms > 0 ? Url.Action("Create", "Bookings", new { roomTypeId = room.Id }) : ""
+                    }))
+                </script>
+            }
             </div>
             @if(Model.AddOnServices.Any()){<div class="mb-4 fade-up"><h4 class="fw-bold mb-3"><i class="bi bi-plus-circle me-2" style="color:var(--teal);"></i>Dịch vụ cộng thêm</h4><div class="row g-3">@foreach(var svc in Model.AddOnServices){<div class="col-md-4"><div class="hms-why h-100"><h6 class="fw-bold mb-1" style="font-size:.88rem;">@svc.Name</h6><p class="text-muted small mb-2">@svc.Description</p><span class="hms-price small">@svc.Price.ToString("N0")₫</span></div></div>}</div></div>}
             @if(Model.Reviews.Any()){<div class="mb-4 fade-up"><h4 class="fw-bold mb-3"><i class="bi bi-chat-quote me-2" style="color:var(--teal);"></i>Đánh giá (@Model.Reviews.Count)</h4>@foreach(var r in Model.Reviews.OrderByDescending(r=>r.CreatedAt)){<div class="hms-review"><div class="d-flex justify-content-between mb-2"><div class="d-flex align-items-center gap-2"><div style="width:32px;height:32px;border-radius:50%;background:var(--teal-pale);color:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;">@r.User.FullName.Substring(0,1)</div><strong style="font-size:.88rem;">@r.User.FullName</strong></div><span class="text-muted small">@r.CreatedAt.ToString("dd/MM/yyyy")</span></div><div class="mb-1">@for(int i=1;i<=5;i++){<i class="bi @(i<=r.Rating?"bi-star-fill text-warning":"bi-star text-muted")" style="font-size:.8rem;"></i>}<span class="ms-2 small text-muted">Cá nhân hóa: @r.PersonalizationRating/5</span></div>@if(!string.IsNullOrEmpty(r.Comment)){<p class="mb-0 text-muted small">@r.Comment</p>}</div>}</div>}
@@ -37,3 +107,224 @@
         </div>
     </div>
 </div>
+
+<!-- Room Detail Modal -->
+<div class="hms-modal-overlay" id="roomModal">
+    <div class="hms-modal">
+        <div class="hms-modal-header">
+            <h5 class="fw-bold mb-0" id="modalRoomName"></h5>
+            <button class="hms-modal-close" id="modalClose" aria-label="Đóng"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="hms-modal-body">
+            <!-- Modal Image Carousel -->
+            <div class="hms-modal-gallery" id="modalCarousel">
+                <div class="hms-carousel-track" id="modalTrack"></div>
+                <button class="hms-carousel-btn hms-carousel-prev" id="modalPrev"><i class="bi bi-chevron-left"></i></button>
+                <button class="hms-carousel-btn hms-carousel-next" id="modalNext"><i class="bi bi-chevron-right"></i></button>
+                <div class="hms-carousel-counter" id="modalCounter"></div>
+            </div>
+            <!-- Room Quick Info -->
+            <div class="d-flex flex-wrap gap-3 my-3" id="modalQuickInfo"></div>
+            <!-- Room Full Description -->
+            <div class="hms-form-section mb-3">
+                <h6 class="fw-bold mb-2"><i class="bi bi-info-circle me-2" style="color:var(--teal);"></i>Mô tả chi tiết</h6>
+                <p class="text-muted mb-0" style="line-height:1.8;" id="modalDesc"></p>
+            </div>
+            <!-- Room Amenities Section -->
+            <div class="hms-form-section mb-3">
+                <h6 class="fw-bold mb-2"><i class="bi bi-patch-check me-2" style="color:var(--teal);"></i>Tiện ích & Dịch vụ phòng</h6>
+                <div class="d-flex flex-wrap gap-2" id="modalAmenities"></div>
+            </div>
+            <!-- Room Badges -->
+            <div class="d-flex flex-wrap gap-2 mb-3" id="modalBadges"></div>
+        </div>
+        <div class="hms-modal-footer">
+            <div>
+                <div class="hms-price fs-5" id="modalPrice"></div>
+                <small class="text-muted" id="modalAvail"></small>
+            </div>
+            <a href="#" class="btn btn-primary" id="modalBookBtn"><i class="bi bi-calendar-plus me-1"></i>Chọn phòng</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    // ==================== HERO CAROUSEL ====================
+    const carousel = document.getElementById('heroCarousel');
+    if (carousel) {
+        const slides = carousel.querySelectorAll('.hms-carousel-slide');
+        const dots = carousel.querySelectorAll('.hms-carousel-dot');
+        const counter = document.getElementById('carouselCurrent');
+        const total = slides.length;
+        if (total > 1) {
+            let current = 0, timer = null;
+            const INTERVAL = 4000;
+            function goTo(i) { slides[current].classList.remove('active'); if(dots[current]) dots[current].classList.remove('active'); current=(i+total)%total; slides[current].classList.add('active'); if(dots[current]) dots[current].classList.add('active'); if(counter) counter.textContent=current+1; }
+            function next() { goTo(current+1); }
+            function prev() { goTo(current-1); }
+            function startAuto() { timer = setInterval(next, INTERVAL); }
+            function stopAuto() { clearInterval(timer); }
+            carousel.querySelector('.hms-carousel-next')?.addEventListener('click', function(){ stopAuto(); next(); startAuto(); });
+            carousel.querySelector('.hms-carousel-prev')?.addEventListener('click', function(){ stopAuto(); prev(); startAuto(); });
+            dots.forEach(function(d){ d.addEventListener('click', function(){ stopAuto(); goTo(parseInt(this.dataset.index)); startAuto(); }); });
+            carousel.addEventListener('mouseenter', stopAuto);
+            carousel.addEventListener('mouseleave', startAuto);
+            let tx=0;
+            carousel.addEventListener('touchstart', function(e){ tx=e.changedTouches[0].screenX; stopAuto(); }, {passive:true});
+            carousel.addEventListener('touchend', function(e){ var d=e.changedTouches[0].screenX-tx; if(Math.abs(d)>50){ d>0?prev():next(); } startAuto(); }, {passive:true});
+            startAuto();
+        }
+    }
+
+    // ==================== ROOM DETAIL MODAL ====================
+    const overlay = document.getElementById('roomModal');
+    const modal = overlay?.querySelector('.hms-modal');
+    const track = document.getElementById('modalTrack');
+    const counterEl = document.getElementById('modalCounter');
+    let mCur = 0, mTotal = 0;
+
+    function openModal(roomId) {
+        const json = document.querySelector('script.room-data[data-room-id="' + roomId + '"]');
+        if (!json) return;
+        const data = JSON.parse(json.textContent);
+
+        // Name
+        document.getElementById('modalRoomName').textContent = data.name;
+
+        // Images carousel
+        track.innerHTML = '';
+        mTotal = data.images.length;
+        mCur = 0;
+        data.images.forEach(function(url, i) {
+            var slide = document.createElement('div');
+            slide.className = 'hms-carousel-slide' + (i === 0 ? ' active' : '');
+            slide.innerHTML = '<img src="' + url + '" alt="' + data.name + '">';
+            track.appendChild(slide);
+        });
+        counterEl.textContent = mTotal > 0 ? '1 / ' + mTotal : '';
+        document.getElementById('modalPrev').style.display = mTotal > 1 ? '' : 'none';
+        document.getElementById('modalNext').style.display = mTotal > 1 ? '' : 'none';
+
+        // Quick info
+        var qi = document.getElementById('modalQuickInfo');
+        qi.innerHTML = '<div class="hms-quick-info"><i class="bi bi-people"></i> ' + data.capacity + ' khách</div>'
+            + '<div class="hms-quick-info"><i class="bi bi-rulers"></i> ' + data.roomSize + ' m²</div>'
+            + '<div class="hms-quick-info"><i class="bi bi-bed"></i> ' + data.bedType + '</div>'
+            + (data.hasPrivateBath ? '<div class="hms-quick-info"><i class="bi bi-droplet"></i> Phòng tắm riêng</div>' : '');
+
+        // Parse services/amenities from description
+        var descText = data.description;
+        var serviceList = [];
+        var serviceKeywords = ["Dịch vụ phòng:", "Dịch vụ:"];
+        
+        for (var k = 0; k < serviceKeywords.length; k++) {
+            var index = descText.indexOf(serviceKeywords[k]);
+            if (index !== -1) {
+                var servicesPart = descText.substring(index + serviceKeywords[k].length);
+                descText = descText.substring(0, index).trim(); // Remove service list part from description text
+                
+                // Clean ending punctuation if exists
+                if (descText.endsWith('.') || descText.endsWith('*')) {
+                    // check if the last word is about VAT and remove or clean up
+                }
+                
+                serviceList = servicesPart.split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+                break;
+            }
+        }
+
+        // Clean up description displayed (like trailing dots or asterisks)
+        document.getElementById('modalDesc').textContent = descText;
+
+        // Fallback default amenities if none parsed
+        if (serviceList.length === 0) {
+            serviceList = ["Wifi miễn phí", "Điều hòa nhiệt độ", "Dọn phòng hàng ngày", "Nước khoáng miễn phí", "Máy sấy tóc"];
+        }
+
+        // Map service to icon
+        var iconMap = {
+            "phục vụ phòng 24/7": "bi-clock",
+            "phục vụ phòng": "bi-bell",
+            "giặt là": "bi-droplet",
+            "giặt khô là hơi": "bi-wind",
+            "giặt lấy ngay": "bi-lightning-charge",
+            "gọi điện đánh thức": "bi-alarm",
+            "gọi điện thoại trong nước và quốc tế": "bi-telephone",
+            "gọi điện thoại": "bi-telephone",
+            "wifi miễn phí": "bi-wifi",
+            "wifi": "bi-wifi",
+            "điều hòa nhiệt độ": "bi-snow",
+            "điều hòa": "bi-snow",
+            "dọn phòng hàng ngày": "bi-brush",
+            "nước khoáng miễn phí": "bi-cup-hot",
+            "nước uống miễn phí": "bi-cup-hot",
+            "máy sấy tóc": "bi-wind",
+            "tivi": "bi-tv",
+            "bàn làm việc": "bi-briefcase",
+            "két an toàn": "bi-safe"
+        };
+
+        var amenitiesHtml = "";
+        serviceList.forEach(function(svc) {
+            var normSvc = svc.toLowerCase().replace(/[\.\*]/g, "").trim();
+            var iconClass = "bi-check-circle"; // Fallback icon
+            for (var key in iconMap) {
+                if (normSvc.indexOf(key) !== -1 || key.indexOf(normSvc) !== -1) {
+                    iconClass = iconMap[key];
+                    break;
+                }
+            }
+            amenitiesHtml += '<span class="hms-amenity"><i class="bi ' + iconClass + ' text-teal"></i> ' + svc.replace(/[\.\*]/g, "").trim() + '</span>';
+        });
+        document.getElementById('modalAmenities').innerHTML = amenitiesHtml;
+
+        // Badges
+        var badges = '';
+        if (data.isQuiet) badges += '<span class="badge hms-badge hms-badge-ai">🤫 Yên tĩnh</span>';
+        if (data.isVegan) badges += '<span class="badge hms-badge hms-badge-ai">🌱 Ăn chay</span>';
+        if (data.isAllergy) badges += '<span class="badge hms-badge hms-badge-ai">🛡️ Dị ứng</span>';
+        if (data.noScent) badges += '<span class="badge hms-badge hms-badge-ai">🌿 Không mùi</span>';
+        document.getElementById('modalBadges').innerHTML = badges;
+
+        // Footer
+        document.getElementById('modalPrice').innerHTML = data.price + '₫<small class="text-muted fw-normal">/đêm</small>';
+        document.getElementById('modalAvail').textContent = 'Còn ' + data.available + ' phòng';
+        var bookBtn = document.getElementById('modalBookBtn');
+        if (data.bookUrl) { bookBtn.href = data.bookUrl; bookBtn.classList.remove('disabled'); bookBtn.textContent = ''; bookBtn.innerHTML = '<i class="bi bi-calendar-plus me-1"></i>Chọn phòng'; }
+        else { bookBtn.href = '#'; bookBtn.classList.add('disabled'); bookBtn.textContent = 'Hết phòng'; }
+
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function modalGoTo(i) {
+        var slides = track.querySelectorAll('.hms-carousel-slide');
+        if (slides.length === 0) return;
+        slides[mCur].classList.remove('active');
+        mCur = (i + mTotal) % mTotal;
+        slides[mCur].classList.add('active');
+        counterEl.textContent = (mCur + 1) + ' / ' + mTotal;
+    }
+
+    // Event listeners
+    document.querySelectorAll('.hms-room-name').forEach(function(el) {
+        el.addEventListener('click', function() { openModal(this.dataset.roomId); });
+    });
+
+    document.getElementById('modalClose')?.addEventListener('click', closeModal);
+    overlay?.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+    document.getElementById('modalNext')?.addEventListener('click', function() { modalGoTo(mCur + 1); });
+    document.getElementById('modalPrev')?.addEventListener('click', function() { modalGoTo(mCur - 1); });
+})();
+</script>
+}
+
