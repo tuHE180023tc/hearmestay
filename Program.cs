@@ -77,6 +77,8 @@ namespace HearMeStay
                 var services = scope.ServiceProvider;
                 try
                 {
+                    var context = services.GetRequiredService<ApplicationDbContext>();
+                    await context.Database.MigrateAsync();
                     await SeedData.InitializeAsync(services);
                 }
                 catch (Exception ex)
