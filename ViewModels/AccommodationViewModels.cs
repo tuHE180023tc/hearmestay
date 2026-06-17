@@ -14,6 +14,8 @@ namespace HearMeStay.ViewModels
         public bool? IsQuietRoom { get; set; }
         public bool? SupportsVeganMeal { get; set; }
         public bool? SupportsAllergyRequest { get; set; }
+        public bool? NoStrongScentAvailable { get; set; }
+        public bool? HasPrivateBathroom { get; set; }
         public List<AccommodationCardViewModel> Results { get; set; } = new();
     }
 
@@ -32,5 +34,7 @@ namespace HearMeStay.ViewModels
         public bool HasQuietRoom { get; set; }
         public bool HasVeganMeal { get; set; }
         public bool HasAllergySupport { get; set; }
+        public bool HasPrivateBathroom { get; set; }
+        public bool NoStrongScentAvailable { get; set; }
     }
 }

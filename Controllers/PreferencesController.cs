@@ -17,14 +17,16 @@ namespace HearMeStay.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPreferenceAnalysisService _analysisService;
         private readonly INotificationService _notificationService;
+        private readonly IBookingOperationLogService _operationLogService;
 
         public PreferencesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
-            IPreferenceAnalysisService analysisService, INotificationService notificationService)
+            IPreferenceAnalysisService analysisService, INotificationService notificationService, IBookingOperationLogService operationLogService)
         {
             _context = context;
             _userManager = userManager;
             _analysisService = analysisService;
             _notificationService = notificationService;
+            _operationLogService = operationLogService;
         }
 
         [HttpGet]
@@ -93,9 +95,12 @@ namespace HearMeStay.Controllers
 
             _context.GuestPreferences.Add(pref);
             await _context.SaveChangesAsync();
+            
+            await _operationLogService.LogStatusChangeAsync(booking.Id, userId, "Traveler", booking.BookingStatus, booking.BookingStatus, HearMeStay.Models.Enums.BookingOperationActionType.PreferenceSubmitted, "Khách đã gửi nhu cầu cá nhân/special request.");
 
             // Run AI analysis
             await _analysisService.AnalyzePreferenceAsync(pref);
+            await _operationLogService.LogSystemActionAsync(booking.Id, HearMeStay.Models.Enums.BookingOperationActionType.AiAnalyzed, "AI đã phân tích nhu cầu khách thành tag/task.");
 
             // Notify partner
             await _notificationService.CreateNotificationAsync(
@@ -103,6 +108,8 @@ namespace HearMeStay.Controllers
                 "Khách đã chia sẻ nhu cầu cá nhân",
                 $"Khách đặt phòng #{booking.BookingCode} đã điền form nhu cầu. Xem Guest Insight để chuẩn bị.",
                 "PreferenceSubmitted");
+                
+            await _operationLogService.LogSystemActionAsync(booking.Id, HearMeStay.Models.Enums.BookingOperationActionType.SentToHotelPartner, "Booking đã được gửi đến nơi lưu trú để xác nhận.");
 
             // Xử lý lưu hồ sơ sở thích
             if (model.SaveToProfile)

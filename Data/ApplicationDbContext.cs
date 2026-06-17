@@ -18,6 +18,7 @@ namespace HearMeStay.Data
         public DbSet<Amenity> Amenities { get; set; }
         public DbSet<AccommodationAmenity> AccommodationAmenities { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<BookingOperationLog> BookingOperationLogs { get; set; }
         public DbSet<GuestPreference> GuestPreferences { get; set; }
         public DbSet<GuestInsight> GuestInsights { get; set; }
         public DbSet<GuestInsightTag> GuestInsightTags { get; set; }
@@ -32,6 +33,8 @@ namespace HearMeStay.Data
         public DbSet<SubscriptionPayment> SubscriptionPayments { get; set; }
         public DbSet<UserPreferenceProfile> UserPreferenceProfiles { get; set; }
         public DbSet<UserPreferenceTag> UserPreferenceTags { get; set; }
+        public DbSet<WebsiteVisitLog> WebsiteVisitLogs { get; set; }
+        public DbSet<AccommodationViewLog> AccommodationViewLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -108,6 +111,13 @@ namespace HearMeStay.Data
                 .WithMany(rt => rt.Bookings)
                 .HasForeignKey(b => b.RoomTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Booking -> OperationLogs
+            builder.Entity<BookingOperationLog>()
+                .HasOne(l => l.Booking)
+                .WithMany(b => b.OperationLogs)
+                .HasForeignKey(l => l.BookingId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Booking -> GuestPreference (1-to-1)
             builder.Entity<GuestPreference>()

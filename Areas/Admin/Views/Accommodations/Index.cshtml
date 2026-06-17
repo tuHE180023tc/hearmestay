@@ -11,6 +11,10 @@
         <td>
             @if (a.Status == HearMeStay.Models.Enums.AccommodationStatus.Pending) { <form asp-action="Approve" asp-route-id="@a.Id" method="post" class="d-inline"><button class="btn btn-sm btn-success">Duyệt</button></form> <form asp-action="Reject" asp-route-id="@a.Id" method="post" class="d-inline ms-1"><button class="btn btn-sm btn-danger">Từ chối</button></form> }
             @if (a.Status == HearMeStay.Models.Enums.AccommodationStatus.Approved) { <form asp-action="Hide" asp-route-id="@a.Id" method="post" class="d-inline"><button class="btn btn-sm btn-outline-secondary">Ẩn</button></form> }
+            @if (a.Status == HearMeStay.Models.Enums.AccommodationStatus.Hidden || a.Status == HearMeStay.Models.Enums.AccommodationStatus.Rejected) { 
+                <form asp-action="Unhide" asp-route-id="@a.Id" method="post" class="d-inline"><button class="btn btn-sm btn-primary">Mở lại</button></form> 
+                <form asp-action="Delete" asp-route-id="@a.Id" method="post" class="d-inline ms-1" onsubmit="return confirm('Bạn có chắc chắn muốn xóa vĩnh viễn nơi lưu trú này không? Toàn bộ dữ liệu liên quan sẽ bị mất!');"><button class="btn btn-sm btn-outline-danger">Xóa hẳn</button></form>
+            }
         </td></tr>
     }
     </tbody>

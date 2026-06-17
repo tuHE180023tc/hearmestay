@@ -1,8 +1,11 @@
 @model List<HearMeStay.Models.CommissionTransaction>
-@{ ViewData["Title"] = "Quản lý hoa hồng"; }
-<h2 class="fw-bold mb-4">Quản lý hoa hồng</h2>
+@{ ViewData["Title"] = "Doanh thu phí dịch vụ"; }
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Doanh thu phí dịch vụ</h2>
+    <a asp-action="ExportServiceFeeReportPdf" class="btn btn-outline-primary"><i class="bi bi-file-earmark-pdf me-2"></i>Xuất báo cáo PDF</a>
+</div>
 <table class="table table-hover bg-white rounded shadow-sm">
-    <thead class="table-light"><tr><th>Booking</th><th>Nơi lưu trú</th><th>Tổng tiền</th><th>Hoa hồng</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+    <thead class="table-light"><tr><th>Booking</th><th>Nơi lưu trú</th><th>Tổng khách thanh toán</th><th>Phí dịch vụ 15%</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
     <tbody>
     @foreach (var c in Model)
     {

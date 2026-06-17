@@ -23,7 +23,8 @@
             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Accommodations"?"active":"")" asp-area="Admin" asp-controller="Accommodations" asp-action="Index"><i class="bi bi-house"></i>Nơi lưu trú</a>
             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Subscriptions"?"active":"")" asp-area="Admin" asp-controller="Subscriptions" asp-action="Index"><i class="bi bi-star"></i>Gói dịch vụ</a>
             <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Bookings"?"active":"")" asp-area="Admin" asp-controller="Bookings" asp-action="Index"><i class="bi bi-calendar-check"></i>Đặt phòng</a>
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Commissions"?"active":"")" asp-area="Admin" asp-controller="Commissions" asp-action="Index"><i class="bi bi-cash-coin"></i>Hoa hồng</a>
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="Commissions"?"active":"")" asp-area="Admin" asp-controller="Commissions" asp-action="Index"><i class="bi bi-cash-coin"></i>Phí dịch vụ</a>
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString()=="MarketingReports"?"active":"")" asp-area="Admin" asp-controller="MarketingReports" asp-action="Index"><i class="bi bi-graph-up-arrow"></i>Báo cáo Marketing</a>
         </nav>
         <hr style="border-color:var(--white-05);margin:.75rem 1.5rem;" />
         <nav class="nav flex-column"><a class="nav-link" asp-controller="Home" asp-action="Index" asp-area=""><i class="bi bi-arrow-left"></i>Về trang chủ</a></nav>

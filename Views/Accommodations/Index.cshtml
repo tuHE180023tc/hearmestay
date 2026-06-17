@@ -152,15 +152,11 @@
                         </div>
                         <div class="form-check mb-2">
                             <input type="checkbox" name="SupportsAllergyRequest" value="true" class="form-check-input" @(Model.SupportsAllergyRequest==true?"checked":"") id="fa" onchange="this.form.submit()" />
-                            <label class="form-check-label small" for="fa">Hỗ trợ dị ứng thực phẩm</label>
+                            <label class="form-check-label small" for="fa">Hỗ trợ khách dị ứng</label>
                         </div>
                         <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="fhalal">
-                            <label class="form-check-label small" for="fhalal">Đồ ăn Halal</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="fkids">
-                            <label class="form-check-label small" for="fkids">Có thực đơn trẻ em</label>
+                            <input type="checkbox" name="NoStrongScentAvailable" value="true" class="form-check-input" @(Model.NoStrongScentAvailable==true?"checked":"") id="fn" onchange="this.form.submit()" />
+                            <label class="form-check-label small" for="fn">Phòng không mùi nồng</label>
                         </div>
                     </div>
 
@@ -172,16 +168,8 @@
                             <label class="form-check-label small" for="fq">Phòng cách âm / Yên tĩnh</label>
                         </div>
                         <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="fr1">
-                            <label class="form-check-label small" for="fr1">Phòng có ban công</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="fr2">
-                            <label class="form-check-label small" for="fr2">View biển / hồ</label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="fr3">
-                            <label class="form-check-label small" for="fr3">Phòng có bồn tắm</label>
+                            <input type="checkbox" name="HasPrivateBathroom" value="true" class="form-check-input" @(Model.HasPrivateBathroom==true?"checked":"") id="fpb" onchange="this.form.submit()" />
+                            <label class="form-check-label small" for="fpb">Phòng tắm riêng</label>
                         </div>
                     </div>
 
@@ -248,6 +236,8 @@
                                         @if(acc.HasQuietRoom){<span class="badge hms-badge hms-badge-ai"><i class="bi bi-volume-mute"></i> Yên tĩnh</span>}
                                         @if(acc.HasVeganMeal){<span class="badge hms-badge hms-badge-ai"><i class="bi bi-flower1"></i> Ăn chay</span>}
                                         @if(acc.HasAllergySupport){<span class="badge hms-badge hms-badge-ai"><i class="bi bi-shield-check"></i> Dị ứng</span>}
+                                        @if(acc.NoStrongScentAvailable){<span class="badge hms-badge hms-badge-ai"><i class="bi bi-wind"></i> Không mùi</span>}
+                                        @if(acc.HasPrivateBathroom){<span class="badge hms-badge hms-badge-ai"><i class="bi bi-droplet"></i> Tắm riêng</span>}
                                     </div>
                                 </div>
                                 

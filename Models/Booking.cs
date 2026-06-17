@@ -137,5 +137,19 @@ namespace HearMeStay.Models
         public virtual GuestPreference? GuestPreference { get; set; }
         public virtual Review? Review { get; set; }
         public virtual CommissionTransaction? CommissionTransaction { get; set; }
+
+        // Operation tracking
+        public string? CurrentStep { get; set; }
+        public string? NextAction { get; set; }
+        public DateTime? NextActionDueAt { get; set; }
+        public string? InternalNote { get; set; }
+        public string? LastHandledByUserId { get; set; }
+        public DateTime? LastHandledAt { get; set; }
+        public virtual ICollection<BookingOperationLog> OperationLogs { get; set; } = new List<BookingOperationLog>();
+
+        // Marketing Tracking
+        public string? MarketingSource { get; set; }
+        public string? MarketingMedium { get; set; }
+        public string? MarketingCampaign { get; set; }
     }
 }

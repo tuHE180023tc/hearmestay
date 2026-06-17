@@ -1,8 +1,15 @@
 @model HearMeStay.Models.Booking
+@inject HearMeStay.Data.ApplicationDbContext dbContext
 @{ ViewData["Title"] = "Chi tiết đặt phòng & AI Insight"; }
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="hms-section-title mb-0">Booking #@Model.BookingCode</h2>
-    <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Quay lại</a>
+    <div class="d-flex gap-2">
+        @if (Model.BookingStatus == HearMeStay.Models.Enums.BookingStatus.Confirmed || Model.BookingStatus == HearMeStay.Models.Enums.BookingStatus.Completed)
+        {
+            <a asp-action="ExportBookingConfirmationPdf" asp-route-id="@Model.Id" class="btn btn-primary btn-sm"><i class="bi bi-file-earmark-pdf me-1"></i>Phiếu xác nhận PDF</a>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>Quay lại</a>
+    </div>
 </div>
 
 <div class="row g-4">
@@ -30,6 +37,78 @@
                 </div>
             }
         </div>
+
+        <!-- Nhật ký xử lý booking -->
+        <div class="hms-form-section p-4 mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2" style="color:var(--teal);"></i>Nhật ký xử lý booking</h5>
+                <a asp-action="ExportOperationLogPdf" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-secondary"><i class="bi bi-file-earmark-pdf me-1"></i>Xuất PDF</a>
+            </div>
+            
+            <div class="mb-3 p-3 bg-light rounded" style="font-size: 0.9rem;">
+                @{
+                    string lastHandledByName = "Chưa có";
+                    if (!string.IsNullOrEmpty(Model.LastHandledByUserId))
+                    {
+                        var lastUser = await dbContext.Users.FindAsync(Model.LastHandledByUserId);
+                        if (lastUser != null) lastHandledByName = lastUser.FullName;
+                    }
+                }
+                <div class="row mb-2">
+                    <div class="col-6 text-muted">Trạng thái hiện tại:</div>
+                    <div class="col-6 fw-bold">@Model.BookingStatus</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-6 text-muted">Bước xử lý hiện tại:</div>
+                    <div class="col-6 fw-bold">@(Model.CurrentStep ?? "Không có")</div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-6 text-muted">Người xử lý cuối:</div>
+                    <div class="col-6">@lastHandledByName - @(Model.LastHandledAt?.ToString("dd/MM/yyyy HH:mm") ?? "")</div>
+                </div>
+                <div class="row">
+                    <div class="col-6 text-muted">Việc cần làm tiếp:</div>
+                    <div class="col-6 text-primary fw-bold">@(Model.NextAction ?? "Chưa có")</div>
+                </div>
+            </div>
+
+            @if (Model.OperationLogs != null && Model.OperationLogs.Any())
+            {
+                <div class="timeline" style="border-left: 2px solid #e9ecef; margin-left: 10px; padding-left: 15px; position: relative;">
+                    @foreach (var log in Model.OperationLogs)
+                    {
+                        <div class="timeline-item mb-4" style="position: relative;">
+                            <div class="timeline-indicator" style="position: absolute; left: -22px; top: 0; width: 12px; height: 12px; border-radius: 50%; background-color: var(--teal);"></div>
+                            <div class="text-muted small mb-1">
+                                <i class="bi bi-clock me-1"></i>@log.CreatedAt.ToString("dd/MM/yyyy HH:mm") 
+                                <span class="ms-2 badge bg-secondary">@log.ActorRole</span>
+                            </div>
+                            <div class="fw-bold">@HearMeStay.Models.Enums.BookingOperationActionTypeHelper.GetDisplayName(log.ActionType)</div>
+                            @if (!string.IsNullOrEmpty(log.Note))
+                            {
+                                <div class="text-muted small mt-1">@log.Note</div>
+                            }
+                            @if (!string.IsNullOrEmpty(log.InternalNote))
+                            {
+                                <div class="small mt-1 p-2 bg-warning bg-opacity-10 rounded border border-warning" style="color: #856404;">
+                                    <strong>Ghi chú nội bộ:</strong> @log.InternalNote
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(log.NextAction))
+                            {
+                                <div class="small mt-1 text-primary">
+                                    <i class="bi bi-arrow-return-right me-1"></i><strong>Tiếp theo:</strong> @log.NextAction
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">Chưa có nhật ký xử lý.</p>
+            }
+        </div>
     </div>
 
     <!-- Cột phải: AI Insight & Xác nhận -->
@@ -38,9 +117,12 @@
         {
             var insight = Model.GuestPreference.GuestInsight;
             <div class="hms-form-section p-4 mb-4" style="border: 1px solid var(--teal-pale); box-shadow: 0 4px 12px rgba(13,148,136,0.1);">
-                <div class="d-flex align-items-center gap-2 border-bottom pb-2 mb-3">
-                    <i class="bi bi-magic fs-4" style="color:var(--teal);"></i>
-                    <h5 class="fw-bold mb-0">AI Phân tích nhu cầu</h5>
+                <div class="d-flex justify-content-between align-items-center gap-2 border-bottom pb-2 mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-magic fs-4" style="color:var(--teal);"></i>
+                        <h5 class="fw-bold mb-0">AI Phân tích nhu cầu</h5>
+                    </div>
+                    <a asp-action="ExportGuestInsightPdf" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary"><i class="bi bi-file-earmark-pdf me-1"></i>Xuất phiếu AI Insight</a>
                 </div>
                 
                 <p class="mb-3"><strong>Summary:</strong> @insight.Summary</p>

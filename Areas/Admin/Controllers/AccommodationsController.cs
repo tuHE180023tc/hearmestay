@@ -26,5 +26,19 @@ namespace HearMeStay.Areas.Admin.Controllers
 
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Hide(int id) { var a = await _context.Accommodations.FindAsync(id); if (a != null) { a.Status = AccommodationStatus.Hidden; await _context.SaveChangesAsync(); } TempData["Success"] = "Đã ẩn."; return RedirectToAction("Index"); }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Unhide(int id) { var a = await _context.Accommodations.FindAsync(id); if (a != null) { a.Status = AccommodationStatus.Approved; await _context.SaveChangesAsync(); } TempData["Success"] = "Đã mở lại."; return RedirectToAction("Index"); }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id) { 
+            var a = await _context.Accommodations.FindAsync(id); 
+            if (a != null) { 
+                _context.Accommodations.Remove(a); 
+                await _context.SaveChangesAsync(); 
+            } 
+            TempData["Success"] = "Đã xóa vĩnh viễn."; 
+            return RedirectToAction("Index"); 
+        }
     }
 }

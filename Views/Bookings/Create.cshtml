@@ -23,7 +23,10 @@
                     <div class="mb-3"><textarea asp-for="GuestNote" class="form-control" rows="3" placeholder="Ghi chú thêm cho nơi lưu trú..."></textarea></div>
                     <div class="p-3" style="background:var(--bg-page);border-radius:var(--r);font-size:.85rem;"><i class="bi bi-credit-card me-2" style="color:var(--teal);"></i><strong>Hình thức thanh toán:</strong> Thanh toán tại nơi lưu trú</div>
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg w-100 mt-2 fade-up">Tiếp tục chia sẻ nhu cầu <i class="bi bi-arrow-right ms-1"></i></button>
+                <div class="d-flex gap-3 mt-4 fade-up">
+                    <button type="submit" name="skipPreferences" value="true" class="btn btn-outline-secondary btn-lg flex-grow-1" style="font-weight: 500;">Bỏ qua bước này</button>
+                    <button type="submit" name="skipPreferences" value="false" class="btn btn-primary btn-lg flex-grow-1" style="font-weight: 500;">Tiếp tục chia sẻ nhu cầu <i class="bi bi-arrow-right ms-1"></i></button>
+                </div>
             </form>
         </div>
         <!-- Sidebar -->

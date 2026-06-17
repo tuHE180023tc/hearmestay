@@ -4,6 +4,7 @@ using HearMeStay.Data;
 using HearMeStay.Models;
 using HearMeStay.Services;
 using HearMeStay.Services.Interfaces;
+using QuestPDF.Infrastructure;
 
 namespace HearMeStay
 {
@@ -12,6 +13,8 @@ namespace HearMeStay
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            QuestPDF.Settings.License = LicenseType.Community;
 
             // Add DbContext
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -58,6 +61,10 @@ namespace HearMeStay
             builder.Services.AddScoped<IFileUploadService, FileUploadService>();
             builder.Services.AddScoped<IReportService, ReportService>();
             builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IBookingOperationLogService, BookingOperationLogService>();
+            builder.Services.AddScoped<IMarketingReportService, MarketingReportService>();
+            builder.Services.AddScoped<IPdfExportService, PdfExportService>();
             builder.Services.AddHostedService<SubscriptionBackgroundService>();
 
             // Conditional AI provider registration

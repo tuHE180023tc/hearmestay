@@ -1,0 +1,282 @@
+@{
+    ViewData["Title"] = "Báo cáo Marketing";
+    var filter = ViewBag.Filter as HearMeStay.ViewModels.MarketingReportFilterViewModel;
+    var overview = ViewBag.Overview as HearMeStay.ViewModels.MarketingOverviewViewModel;
+    var funnel = ViewBag.ConversionFunnel as List<HearMeStay.ViewModels.ConversionFunnelViewModel>;
+    var sources = ViewBag.TrafficSources as List<HearMeStay.ViewModels.TrafficSourceReportViewModel>;
+    var accs = ViewBag.TopAccommodations as List<HearMeStay.ViewModels.TopAccommodationMarketingViewModel>;
+    var ai = ViewBag.AiReport as HearMeStay.ViewModels.AiPersonalizationReportViewModel;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Báo cáo chỉ số Marketing</h2>
+    <a asp-action="ExportMarketingReportPdf" asp-route-startDate="@filter?.StartDate?.ToString("yyyy-MM-dd")" asp-route-endDate="@filter?.EndDate?.ToString("yyyy-MM-dd")" class="btn btn-outline-primary"><i class="bi bi-file-earmark-pdf me-2"></i>Xuất báo cáo Marketing PDF</a>
+</div>
+
+<!-- Bộ lọc -->
+<div class="card shadow-sm mb-4 border-0 rounded-4">
+    <div class="card-body">
+        <form method="get" asp-action="Index">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label text-muted small">Từ ngày</label>
+                    <input type="date" name="StartDate" class="form-control" value="@(filter?.StartDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small">Đến ngày</label>
+                    <input type="date" name="EndDate" class="form-control" value="@(filter?.EndDate?.ToString("yyyy-MM-dd"))" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small">Nguồn marketing</label>
+                    <select name="Source" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="Direct" selected="@(filter?.Source == "Direct")">Direct</option>
+                        <option value="Facebook" selected="@(filter?.Source == "Facebook")">Facebook</option>
+                        <option value="Google" selected="@(filter?.Source == "Google")">Google</option>
+                        <option value="TikTok" selected="@(filter?.Source == "TikTok")">TikTok</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel me-2"></i>Lọc báo cáo</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Section 1: Tổng quan KPI -->
+<h5 class="fw-bold mb-3"><i class="bi bi-speedometer2 me-2 text-primary"></i>Tổng quan KPI</h5>
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1" title="Tổng số lượt truy cập website"><i class="bi bi-globe me-1 text-primary"></i>Lượt truy cập</div>
+                <h3 class="fw-bold mb-0">@overview?.WebsiteVisitors</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1" title="Số lượng người dùng mới"><i class="bi bi-person-plus me-1 text-success"></i>Người dùng mới</div>
+                <h3 class="fw-bold mb-0">@overview?.NewUsers</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1" title="Tổng số yêu cầu đặt phòng (mọi trạng thái)"><i class="bi bi-calendar-plus me-1 text-warning"></i>Booking request</div>
+                <h3 class="fw-bold mb-0">@overview?.BookingRequests</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1" title="Booking đã được xác nhận hoặc hoàn thành"><i class="bi bi-check-circle me-1 text-info"></i>Booking thành công</div>
+                <h3 class="fw-bold mb-0">@overview?.ConfirmedBookings</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background: #f8faff;">
+            <div class="card-body">
+                <div class="text-muted small mb-1" title="Tổng giá trị booking thành công"><i class="bi bi-cash me-1 text-success"></i>Tổng doanh thu booking</div>
+                <h4 class="fw-bold text-success mb-0">@overview?.TotalBookingValue.ToString("N0")₫</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100" style="background: #fff8f5;">
+            <div class="card-body">
+                <div class="text-muted small mb-1" title="Doanh thu phí dịch vụ 15% (trên các booking thành công)"><i class="bi bi-piggy-bank me-1 text-danger"></i>Doanh thu phí dịch vụ</div>
+                <h4 class="fw-bold text-danger mb-0">@overview?.ServiceFeeRevenue.ToString("N0")₫</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1" title="Tỷ lệ người dùng truy cập chuyển đổi thành booking"><i class="bi bi-graph-up-arrow me-1 text-primary"></i>Tỷ lệ chuyển đổi</div>
+                <h3 class="fw-bold mb-0">@overview?.BookingConversionRate%</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-1" title="Tỷ lệ khách hàng có từ 2 booking trở lên"><i class="bi bi-arrow-repeat me-1 text-secondary"></i>Tỷ lệ khách quay lại</div>
+                <h3 class="fw-bold mb-0">@overview?.ReturnCustomerRate%</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Section 2: Phễu chuyển đổi -->
+    <div class="col-lg-5">
+        <h5 class="fw-bold mb-3"><i class="bi bi-funnel me-2 text-primary"></i>Phễu chuyển đổi (Funnel)</h5>
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Bước</th>
+                            <th class="text-end">Số lượng</th>
+                            <th class="text-end pe-4">Tỷ lệ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (funnel != null)
+                        {
+                            foreach (var step in funnel)
+                            {
+                                <tr>
+                                    <td class="ps-4">@step.StepName</td>
+                                    <td class="text-end fw-bold">@step.Count</td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <div class="progress me-2 w-50" style="height: 6px;">
+                                                <div class="progress-bar bg-primary" role="progressbar" style="width: @step.Percentage.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)%;"></div>
+                                            </div>
+                                            <span>@step.Percentage%</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Nguồn truy cập -->
+    <div class="col-lg-7">
+        <h5 class="fw-bold mb-3"><i class="bi bi-diagram-3 me-2 text-primary"></i>Hiệu quả Nguồn truy cập</h5>
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Nguồn</th>
+                                <th class="text-end">Truy cập</th>
+                                <th class="text-end">Booking req</th>
+                                <th class="text-end">Thành công</th>
+                                <th class="text-end">Doanh thu phí</th>
+                                <th class="text-end pe-4">Tỷ lệ CĐ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (sources != null && sources.Any())
+                            {
+                                foreach (var s in sources)
+                                {
+                                    <tr>
+                                        <td class="ps-4"><span class="badge bg-secondary">@s.Source</span></td>
+                                        <td class="text-end">@s.Visitors</td>
+                                        <td class="text-end">@s.BookingRequests</td>
+                                        <td class="text-end text-success fw-bold">@s.ConfirmedBookings</td>
+                                        <td class="text-end hms-price">@s.ServiceFeeRevenue.ToString("N0")₫</td>
+                                        <td class="text-end pe-4">@s.ConversionRate%</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="6" class="text-center text-muted py-3">Chưa có dữ liệu.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Section 4: Top nơi lưu trú hiệu quả -->
+    <div class="col-lg-8">
+        <h5 class="fw-bold mb-3"><i class="bi bi-trophy me-2 text-warning"></i>Top Nơi lưu trú hiệu quả (Theo doanh thu)</h5>
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="ps-4">Nơi lưu trú</th>
+                                <th class="text-end">Lượt xem</th>
+                                <th class="text-end">Booking req</th>
+                                <th class="text-end">Thành công</th>
+                                <th class="text-end">Doanh thu phí</th>
+                                <th class="text-end pe-4">Tỷ lệ CĐ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (accs != null && accs.Any())
+                            {
+                                foreach (var a in accs)
+                                {
+                                    <tr>
+                                        <td class="ps-4 fw-bold">@a.AccommodationName</td>
+                                        <td class="text-end">@a.ViewCount</td>
+                                        <td class="text-end">@a.BookingRequests</td>
+                                        <td class="text-end text-success fw-bold">@a.ConfirmedBookings</td>
+                                        <td class="text-end hms-price text-danger">@a.ServiceFeeRevenue.ToString("N0")₫</td>
+                                        <td class="text-end pe-4">@a.ConversionRate%</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="6" class="text-center text-muted py-3">Chưa có dữ liệu.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Chỉ số cá nhân hóa AI -->
+    <div class="col-lg-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-magic me-2 text-primary"></i>Chỉ số Cá nhân hóa AI</h5>
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                    <span class="text-muted">Tổng số nhu cầu đã gửi:</span>
+                    <span class="fw-bold fs-5">@ai?.TotalPreferenceForms</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                    <span class="text-muted">Tỷ lệ booking kèm nhu cầu:</span>
+                    <span class="fw-bold fs-5 text-primary">@ai?.BookingsWithSpecialRequestRate%</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                    <span class="text-muted">Tổng AI Tags được gán:</span>
+                    <span class="fw-bold fs-5">@ai?.TotalAiTags</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                    <span class="text-muted">Số hồ sơ sở thích đã lưu:</span>
+                    <span class="fw-bold fs-5">@ai?.SavedPreferenceProfiles</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted">Số lượt tái sử dụng hồ sơ:</span>
+                    <span class="fw-bold fs-5 text-success">@ai?.ReusedPreferenceProfiles</span>
+                </div>
+
+                @if (ai?.TopTags != null && ai.TopTags.Any())
+                {
+                    <h6 class="fw-bold mt-4 mb-2">Top 5 Nhu cầu (AI Tags)</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var tag in ai.TopTags)
+                        {
+                            <span class="badge bg-light text-dark border"><i class="bi bi-tag me-1"></i>@tag.Key <span class="text-muted ms-1">(@tag.Value)</span></span>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

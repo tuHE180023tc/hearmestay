@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using HearMeStay.Data;
 using HearMeStay.Models.Enums;
 using HearMeStay.ViewModels;
@@ -48,6 +49,12 @@ namespace HearMeStay.Controllers
             if (search.SupportsAllergyRequest == true)
                 query = query.Where(a => a.RoomTypes.Any(r => r.SupportsAllergyRequest));
 
+            if (search.NoStrongScentAvailable == true)
+                query = query.Where(a => a.RoomTypes.Any(r => r.NoStrongScentAvailable));
+
+            if (search.HasPrivateBathroom == true)
+                query = query.Where(a => a.RoomTypes.Any(r => r.HasPrivateBathroom));
+
             search.Results = await query.Select(a => new AccommodationCardViewModel
             {
                 Id = a.Id,
@@ -62,7 +69,9 @@ namespace HearMeStay.Controllers
                 ReviewCount = a.Reviews.Count(r => r.IsVisible),
                 HasQuietRoom = a.RoomTypes.Any(r => r.IsQuietRoom),
                 HasVeganMeal = a.RoomTypes.Any(r => r.SupportsVeganMeal),
-                HasAllergySupport = a.RoomTypes.Any(r => r.SupportsAllergyRequest)
+                HasAllergySupport = a.RoomTypes.Any(r => r.SupportsAllergyRequest),
+                HasPrivateBathroom = a.RoomTypes.Any(r => r.HasPrivateBathroom),
+                NoStrongScentAvailable = a.RoomTypes.Any(r => r.NoStrongScentAvailable)
             }).ToListAsync();
 
             return View(search);
@@ -80,6 +89,22 @@ namespace HearMeStay.Controllers
                 .FirstOrDefaultAsync(a => a.Id == id && a.Status == AccommodationStatus.Approved && a.IsActive);
 
             if (acc == null) return NotFound();
+
+            try
+            {
+                var source = Request.Cookies["hms_utm_source"] ?? "Direct";
+                var userId = User.Identity?.IsAuthenticated == true ? User.FindFirstValue(ClaimTypes.NameIdentifier) : null;
+                _context.AccommodationViewLogs.Add(new HearMeStay.Models.AccommodationViewLog
+                {
+                    AccommodationId = id,
+                    UserId = userId,
+                    Source = source,
+                    SessionId = HttpContext.Session?.Id ?? Guid.NewGuid().ToString()
+                });
+                await _context.SaveChangesAsync();
+            }
+            catch { /* Ignore tracking errors */ }
+
             return View(acc);
         }
     }
